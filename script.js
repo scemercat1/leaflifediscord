@@ -16,14 +16,18 @@ function render() {
     document.getElementById("coinCount").innerText = coins;
     document.getElementById("waterFill").style.width = water + "%";
     document.getElementById("expFill").style.width = exp + "%";
-    document.getElementById("stageTitle").innerText = gameStages[stage].name;
+    
+    var treeAsset = document.getElementById("treeAsset");
     
     if (hasBeluga) {
-        document.getElementById("treeAsset").innerText = "🐱";
-        document.getElementById("treeAsset").className = "tree-emoji beluga-active";
+        // Înlocuim emoji-ul cu imaginea imgur și îi setăm dimensiuni corecte prin inline CSS
+        treeAsset.innerHTML = '<img src="https://i.imgur.com/ifk1dWc.jpeg" alt="Beluga" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">';
+        treeAsset.className = "tree-emoji beluga-active";
         document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
     } else {
-        document.getElementById("treeAsset").innerText = gameStages[stage].emoji;
+        treeAsset.innerHTML = gameStages[stage].emoji;
+        treeAsset.className = "tree-emoji";
+        document.getElementById("stageTitle").innerText = gameStages[stage].name;
     }
 }
 
@@ -103,4 +107,15 @@ function toggleMusic() {
     }
 }
 
+// Inițializarea stării vizuale la pornire
 render();
+
+// --- ASCULTĂTORI DE EVENIMENTE COMPATIBILI CU CSP DISCORD ---
+// Această secțiune face butoanele să răspundă la click în interiorul iframe-ului Discord
+document.getElementById("btnWater").addEventListener("click", waterAction);
+document.getElementById("btnOpenShop").addEventListener("click", function() { toggleShop(true); });
+document.getElementById("btnCloseShop").addEventListener("click", function() { toggleShop(false); });
+document.getElementById("btnBuyBeluga").addEventListener("click", buyBeluga);
+document.getElementById("btnBuySecret").addEventListener("click", buySecret);
+document.getElementById("btnContinue").addEventListener("click", continueGrind);
+document.getElementById("musicBtn").addEventListener("click", toggleMusic);
