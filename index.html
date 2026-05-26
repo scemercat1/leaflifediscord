@@ -37,10 +37,11 @@
             height: 180px; display: flex; align-items: center; justify-content: center; margin: 15px 0;
             position: relative; overflow: hidden;
         }
-        .tree-img {
-            max-height: 160px; max-width: 160px;
+        .tree-emoji {
+            font-size: 90px;
             filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.5));
-            transition: transform 0.3s ease, filter 0.5s ease;
+            transition: transform 0.3s ease;
+            user-select: none;
         }
 
         @keyframes moveBeluga {
@@ -122,7 +123,7 @@
         <div class="stage-box" id="stageTitle">🌱 Stage 1: Mystic Space Seed</div>
         
         <div class="tree-stage-wrapper">
-            <img id="treeAsset" src="https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f331.png" class="tree-img" alt="Tree Status">
+            <div id="treeAsset" class="tree-emoji">🌱</div>
         </div>
 
         <div class="bar-container">
