@@ -103,15 +103,6 @@ function toggleMusic() {
     }
 }
 
-async function startSystem() {
-    if (typeof window.discordSdk !== 'undefined' || typeof discordSdk !== 'undefined') {
-        try {
-            const sdk = new window.discordSdk.DiscordSDK("1508701744283127808");
-            await sdk.ready();
-        } catch (err) {
-            print("Discord SDK failed, bypassing for fallback logic.");
-        }
-    }
+window.onload = function() {
     render();
-}
-startSystem();
+};
