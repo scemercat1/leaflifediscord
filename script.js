@@ -1,11 +1,11 @@
-let coins = 0;
-let water = 30;
-let exp = 0;
-let stage = 1;
-let musicPlaying = false;
-let hasBeluga = false;
+var coins = 0;
+var water = 30;
+var exp = 0;
+var stage = 1;
+var musicPlaying = false;
+var hasBeluga = false;
 
-const gameStages = {
+var gameStages = {
     1: { name: "🌱 Stage 1: Mystic Space Seed", emoji: "🌱" },
     2: { name: "🌿 Stage 2: Sprouting Leaf", emoji: "🌿" },
     3: { name: "🌳 Stage 3: Aircraft Bonsai", emoji: "🌳" },
@@ -82,16 +82,16 @@ function buySecret() {
 }
 
 function triggerEvolutionEffect() {
-    const asset = document.getElementById("treeAsset");
+    var asset = document.getElementById("treeAsset");
     asset.style.transform = "scale(1.3) rotate(10deg)";
-    setTimeout(() => { asset.style.transform = "scale(1) rotate(0deg)"; }, 400);
+    setTimeout(function() { asset.style.transform = "scale(1) rotate(0deg)"; }, 400);
 }
 
 function toggleMusic() {
-    const music = document.getElementById("bgMusic");
-    const btn = document.getElementById("musicBtn");
+    var music = document.getElementById("bgMusic");
+    var btn = document.getElementById("musicBtn");
     if (!musicPlaying) {
-        music.play().catch(e => console.log(e));
+        music.play().catch(function(e) { console.log(e); });
         musicPlaying = true;
         btn.innerText = "⏸️ Pause Background Music";
         btn.style.background = "#ed4245";
@@ -103,6 +103,4 @@ function toggleMusic() {
     }
 }
 
-window.onload = function() {
-    render();
-};
+render();
