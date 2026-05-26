@@ -20,8 +20,7 @@ function render() {
     var treeAsset = document.getElementById("treeAsset");
     
     if (hasBeluga) {
-        // Înlocuim emoji-ul cu imaginea imgur și îi setăm dimensiuni corecte prin inline CSS
-        treeAsset.innerHTML = '<img src="https://i.imgur.com/ifk1dWc.jpeg" alt="Beluga" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">';
+        treeAsset.innerHTML = '<img src="https://imgur.com" alt="Beluga" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">';
         treeAsset.className = "tree-emoji beluga-active";
         document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
     } else {
@@ -69,9 +68,10 @@ function buyBeluga() {
         hasBeluga = true;
         toggleShop(false);
         render();
-        alert("🐱 You bought Beluga! Look at her go left and right!");
+        document.getElementById("stageTitle").innerText = "🐱 Success! You bought Beluga!";
     } else {
-        alert("❌ You need 70 Aircraft Coins to buy Beluga! Keep grinding!");
+        document.getElementById("stageTitle").innerText = "❌ Need 70 Coins for Beluga!";
+        setTimeout(render, 2500);
     }
 }
 
@@ -79,9 +79,11 @@ function buySecret() {
     if (coins >= 100) {
         coins -= 100;
         render();
-        alert("This is just a demo on discord, the full game will be 3D lol");
+        document.getElementById("stageTitle").innerText = "ℹ️ This is a demo. Full game is 3D lol";
+        setTimeout(render, 4000);
     } else {
-        alert("❌ You need 100 Aircraft Coins for the secret! Keep grinding!");
+        document.getElementById("stageTitle").innerText = "❌ Need 100 Coins for Secret!";
+        setTimeout(render, 2500);
     }
 }
 
@@ -95,7 +97,7 @@ function toggleMusic() {
     var music = document.getElementById("bgMusic");
     var btn = document.getElementById("musicBtn");
     if (!musicPlaying) {
-        music.play().catch(function(e) { console.log(e); });
+        music.play().catch(function(e) { console.log("Audio delayed until click:", e); });
         musicPlaying = true;
         btn.innerText = "⏸️ Pause Background Music";
         btn.style.background = "#ed4245";
@@ -107,11 +109,8 @@ function toggleMusic() {
     }
 }
 
-// Inițializarea stării vizuale la pornire
 render();
 
-// --- ASCULTĂTORI DE EVENIMENTE COMPATIBILI CU CSP DISCORD ---
-// Această secțiune face butoanele să răspundă la click în interiorul iframe-ului Discord
 document.getElementById("btnWater").addEventListener("click", waterAction);
 document.getElementById("btnOpenShop").addEventListener("click", function() { toggleShop(true); });
 document.getElementById("btnCloseShop").addEventListener("click", function() { toggleShop(false); });
