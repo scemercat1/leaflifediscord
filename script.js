@@ -2,10 +2,9 @@ let coins = 0;
 let water = 30;
 let exp = 0;
 let stage = 1;
-let prestigeLevels = 0;
 let musicPlaying = false;
+let hasBeluga = false;
 
-// Imagini sigure direct din CDN-ul de producție Twitter Twemoji (Nu vor fi șterse niciodată și merg în orice iframe)
 const gameStages = {
     1: { name: "🌱 Stage 1: Mystic Space Seed", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f331.png" },
     2: { name: "🌿 Stage 2: Sprouting Leaf", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f33f.png" },
@@ -17,83 +16,90 @@ function render() {
     document.getElementById("coinCount").innerText = coins;
     document.getElementById("waterFill").style.width = water + "%";
     document.getElementById("expFill").style.width = exp + "%";
+    document.getElementById("stageTitle").innerText = gameStages[stage].name;
     
-    if (stage >= 4) {
-        document.getElementById("stageTitle").innerText = `✨ Stage 4: Ascended Tree (Prestige Lvl ${prestigeLevels})`;
-        document.getElementById("treeAsset").src = gameStages[4].img;
+    if (hasBeluga) {
+        document.getElementById("treeAsset").src = "https://i.imgur.com/v8PqBq6.png";
+        document.getElementById("treeAsset").className = "tree-img beluga-active";
+        document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
     } else {
-        document.getElementById("stageTitle").innerText = gameStages[stage].name;
         document.getElementById("treeAsset").src = gameStages[stage].img;
     }
 }
 
-// Acțiunea de udare (Funcționează la nesfârșit!)
 function waterAction() {
     water += 15;
     if (water > 100) water = 100;
 
-    // Câștigi monede de fiecare dată
-    coins += Math.floor(Math.random() * 3) + 2; 
-    exp += 15;
+    coins += Math.floor(Math.random() * 4) + 3;
+    exp += 25;
 
     if (exp >= 100) {
-        exp = 0;
-        water = 30;
-        
         if (stage < 4) {
             stage++;
-            triggerEvolutionEffect("#2ecc71"); // Strălucire verde la evoluție
+            exp = 0;
+            water = 30;
+            triggerEvolutionEffect();
+            
+            if (stage === 4) {
+                document.getElementById("endScreen").style.display = "flex";
+            }
         } else {
-            prestigeLevels++; // La nivel maxim, crește nivelul de prestigiu la nesfârșit!
-            triggerEvolutionEffect("#f1c40f"); // Strălucire aurie la prestigiu
+            exp = 100;
         }
     }
-
     render();
 }
 
-// Magazinul (Funcționează la nesfârșit!)
-function buyFertilizer() {
-    if (coins >= 15) {
-        coins -= 15;
-        exp += 35; // Oferă boost de experiență
-        
-        if (exp >= 100) {
-            exp = 0;
-            if (stage < 4) {
-                stage++;
-                triggerEvolutionEffect("#2ecc71");
-            } else {
-                prestigeLevels++;
-                triggerEvolutionEffect("#f1c40f");
-            }
-        }
+function continueGrind() {
+    document.getElementById("endScreen").style.display = "none";
+}
+
+function toggleShop(show) {
+    document.getElementById("shopModal").style.display = show ? "flex" : "none";
+}
+
+function buyBeluga() {
+    if (coins >= 70) {
+        coins -= 70;
+        hasBeluga = true;
+        toggleShop(false);
         render();
+        alert("🐱 You bought Beluga! Look at her go left and right!");
     } else {
-        alert("❌ Not enough Aircraft Coins! Keep watering to earn more.");
+        alert("❌ You need 70 Aircraft Coins to buy Beluga! Keep grinding!");
     }
 }
 
-// Animație fluidă de puls și glow de culoare customizabilă
-function triggerEvolutionEffect(glowColor) {
+function buySecret() {
+    if (coins >= 100) {
+        coins -= 100;
+        render();
+        alert("This is just a demo on discord, the full game will be 3D lol");
+    } else {
+        alert("❌ You need 100 Aircraft Coins for the secret! Keep grinding!");
+    }
+}
+
+function triggerEvolutionEffect() {
     const asset = document.getElementById("treeAsset");
-    asset.style.transform = "scale(1.3) rotate(15deg)";
-    asset.style.filter = `drop-shadow(0px 0px 25px ${glowColor}) brightness(1.4)`;
-    
-    setTimeout(() => {
-        asset.style.transform = "scale(1) rotate(0deg)";
-        asset.style.filter = "drop-shadow(0px 5px 10px rgba(0,0,0,0.5))";
-    }, 500);
+    asset.style.transform = "scale(1.3) rotate(10deg)";
+    setTimeout(() => { asset.style.transform = "scale(1) rotate(0deg)"; }, 400);
 }
 
 function toggleMusic() {
     const music = document.getElementById("bgMusic");
+    const btn = document.getElementById("musicBtn");
     if (!musicPlaying) {
-        music.play().catch(e => console.log("Audio block bypass: ", e));
+        music.play().catch(e => console.log(e));
         musicPlaying = true;
+        btn.innerText = "⏸️ Pause Background Music";
+        btn.style.background = "#ed4245";
     } else {
         music.pause();
         musicPlaying = false;
+        btn.innerText = "🎵 Play Background Music";
+        btn.style.background = "#4f545c";
     }
 }
 
@@ -104,5 +110,4 @@ async function startSystem() {
     }
     render();
 }
-
 startSystem();
