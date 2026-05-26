@@ -99,20 +99,20 @@
         <div id="endScreen" class="end-screen">
             <h2>LeafLifeGame Ended</h2>
             <p>You have successfully ascended the cosmic tree to its final stage!</p>
-            <button class="btn" style="background:#3498db; width:80%;" onclick="continueGrind()">Continue Grind 🚀</button>
+            <button id="btnContinue" class="btn" style="background:#3498db; width:80%;">Continue Grind 🚀</button>
         </div>
 
         <div id="shopModal" class="shop-modal">
             <h2 style="color:#e67e22; margin-top:0;">Space Shop UI</h2>
             <div class="shop-item">
                 <div>🐱 <b>Beluga Pet</b><br><small style="color:#949ba4;">Spawns moving Beluga</small></div>
-                <button class="btn" style="background:#f1c40f; color:#000;" onclick="buyBeluga()">70 🪙</button>
+                <button id="btnBuyBeluga" class="btn" style="background:#f1c40f; color:#000;">70 🪙</button>
             </div>
             <div class="shop-item">
                 <div>❓ <b>??? Secret Item</b><br><small style="color:#949ba4;">Unlock ultimate truth</small></div>
-                <button class="btn" style="background:#9b59b6;" onclick="buySecret()">100 🪙</button>
+                <button id="btnBuySecret" class="btn" style="background:#9b59b6;">100 🪙</button>
             </div>
-            <button class="btn close-shop" onclick="toggleShop(false)">Back to Tree</button>
+            <button id="btnCloseShop" class="btn close-shop">Back to Tree</button>
         </div>
 
         <h1>🍂 LeafLife 2D</h1>
@@ -135,11 +135,11 @@
         </div>
 
         <div class="actions-grid">
-            <button class="btn" onclick="waterAction()">💧 Water Tree</button>
-            <button class="btn btn-shop" onclick="toggleShop(true)">🛒 Open Shop UI</button>
+            <button id="btnWater" class="btn">💧 Water Tree</button>
+            <button id="btnOpenShop" class="btn btn-shop">🛒 Open Shop UI</button>
         </div>
 
-        <button id="musicBtn" class="btn btn-music" onclick="toggleMusic()">🎵 Play Background Music</button>
+        <button id="musicBtn" class="btn btn-music">🎵 Play Background Music</button>
     </div>
 
     <script src="script.js"></script>
