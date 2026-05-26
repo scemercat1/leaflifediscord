@@ -12,6 +12,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100vh; overflow: hidden;
+            pointer-events: auto !important; /* Forțează Discord să trimită click-urile */
         }
         .game-window {
             background: rgba(43, 45, 49, 0.85);
@@ -24,13 +25,16 @@
             text-align: center;
             border: 2px solid #2ecc71;
             position: relative;
+            pointer-events: auto !important;
+            user-select: none;
+            z-index: 1;
         }
         h1 { margin: 0 0 5px 0; color: #2ecc71; font-size: 26px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .currency-display {
             background: #111214; padding: 8px 15px; border-radius: 20px;
             display: inline-block; font-weight: bold; color: #f1c40f; margin-bottom: 15px;
         }
-        .stage-box { font-size: 14px; color: #e3e5e8; margin-bottom: 10px; font-weight: bold; text-shadow: 1px 1px 2px black; }
+        .stage-box { font-size: 14px; color: #e3e5e8; margin-bottom: 10px; font-weight: bold; text-shadow: 1px 1px 2px black; min-height: 38px; }
         
         .tree-stage-wrapper {
             height: 180px; display: flex; align-items: center; justify-content: center; margin: 15px 0;
@@ -40,7 +44,6 @@
             font-size: 90px;
             filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.5));
             transition: transform 0.3s ease;
-            user-select: none;
         }
 
         @keyframes moveBeluga {
@@ -62,6 +65,8 @@
         .btn {
             background: #248046; color: white; border: none; padding: 12px;
             font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s, transform 0.1s;
+            display: block; width: 100%; box-sizing: border-box;
+            pointer-events: auto !important;
         }
         .btn:hover { background: #1a6535; transform: scale(1.02); }
         .btn-shop { background: #e67e22; }
@@ -92,7 +97,7 @@
 <body>
 
     <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="https://soundhelix.com" type="audio/mpeg">
     </audio>
 
     <div class="game-window">
@@ -105,12 +110,18 @@
         <div id="shopModal" class="shop-modal">
             <h2 style="color:#e67e22; margin-top:0;">Space Shop UI</h2>
             <div class="shop-item">
-                <div>🐱 <b>Beluga Pet</b><br><small style="color:#949ba4;">Spawns moving Beluga</small></div>
-                <button id="btnBuyBeluga" class="btn" style="background:#f1c40f; color:#000;">70 🪙</button>
+                <div style="text-align: left;">
+                    🐱 <b>Beluga Pet</b><br>
+                    <small style="color:#949ba4;">Spawns moving Beluga</small>
+                </div>
+                <button id="btnBuyBeluga" class="btn" style="background:#f1c40f; color:#000; width: auto;">70 🪙</button>
             </div>
             <div class="shop-item">
-                <div>❓ <b>??? Secret Item</b><br><small style="color:#949ba4;">Unlock ultimate truth</small></div>
-                <button id="btnBuySecret" class="btn" style="background:#9b59b6;">100 🪙</button>
+                <div style="text-align: left;">
+                    ❓ <b>??? Secret Item</b><br>
+                    <small style="color:#949ba4;">Unlock ultimate truth</small>
+                </div>
+                <button id="btnBuySecret" class="btn" style="background:#9b59b6; width: auto;">100 🪙</button>
             </div>
             <button id="btnCloseShop" class="btn close-shop">Back to Tree</button>
         </div>
@@ -142,6 +153,76 @@
         <button id="musicBtn" class="btn btn-music">🎵 Play Background Music</button>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        window.addEventListener("DOMContentLoaded", function() {
+            var coins = 0;
+            var water = 30;
+            var exp = 0;
+            var stage = 1;
+            var musicPlaying = false;
+            var hasBeluga = false;
+
+            var gameStages = {
+                1: { name: "🌱 Stage 1: Mystic Space Seed", emoji: "🌱" },
+                2: { name: "🌿 Stage 2: Sprouting Leaf", emoji: "🌿" },
+                3: { name: "🌳 Stage 3: Aircraft Bonsai", emoji: "🌳" },
+                4: { name: "✨ Stage 4: Ascended Ancient Entity", emoji: "✨" }
+            };
+
+            function render() {
+                document.getElementById("coinCount").innerText = coins;
+                document.getElementById("waterFill").style.width = water + "%";
+                document.getElementById("expFill").style.width = exp + "%";
+                
+                var treeAsset = document.getElementById("treeAsset");
+                
+                if (hasBeluga) {
+                    treeAsset.innerHTML = '<img src="https://imgur.com" alt="Beluga" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;">';
+                    treeAsset.className = "tree-emoji beluga-active";
+                    document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
+                } else {
+                    treeAsset.innerHTML = gameStages[stage].emoji;
+                    treeAsset.className = "tree-emoji";
+                    document.getElementById("stageTitle").innerText = gameStages[stage].name;
+                }
+            }
+
+            function waterAction() {
+                water += 15;
+                if (water > 100) water = 100;
+
+                coins += Math.floor(Math.random() * 4) + 3;
+                exp += 25;
+
+                if (exp >= 100) {
+                    if (stage < 4) {
+                        stage++;
+                        exp = 0;
+                        water = 30;
+                        triggerEvolutionEffect();
+                        
+                        if (stage === 4) {
+                            document.getElementById("endScreen").style.display = "flex";
+                        }
+                    } else {
+                        exp = 100;
+                    }
+                }
+                render();
+            }
+
+            function continueGrind() {
+                document.getElementById("endScreen").style.display = "none";
+            }
+
+            function toggleShop(show) {
+                document.getElementById("shopModal").style.display = show ? "flex" : "none";
+            }
+
+            function buyBeluga() {
+                if (coins >= 70) {
+                    coins -= 70;
+                    hasBeluga = true;
+                    toggleShop(false);
+                    render();
+                } else {
