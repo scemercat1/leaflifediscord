@@ -19,7 +19,7 @@ function render() {
     document.getElementById("stageTitle").innerText = gameStages[stage].name;
     
     if (hasBeluga) {
-        document.getElementById("treeAsset").src = "https://i.imgur.com/v8PqBq6.png";
+        document.getElementById("treeAsset").src = "https://i.imgur.com/ifk1dWc.jpeg";
         document.getElementById("treeAsset").className = "tree-img beluga-active";
         document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
     } else {
