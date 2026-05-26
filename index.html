@@ -3,82 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeafLife 2D - AircraftGames</title>
+    <title>LeafLife 2D - AircraftGames Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.0.0/dist/index.global.js"></script>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #1a1c1e;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; padding: 0;
+            background-color: #1e1f22;
+            color: #f2f3f5;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
         }
-        .game-container {
-            text-align: center;
+        .game-window {
             background: #2b2d31;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 320px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 360px;
+            text-align: center;
+            border: 2px solid #2ecc71;
         }
-        h1 { font-size: 24px; margin-bottom: 5px; color: #2ecc71; }
-        .stage-text { font-size: 14px; color: #b5bac1; margin-bottom: 20px; }
-        .plant-canvas {
-            width: 150px;
-            height: 150px;
-            margin: 20px auto;
-            transition: transform 0.3s ease;
-        }
-        .plant-canvas:hover { transform: scale(1.05); }
-        .stat-bar {
-            background-color: #4e5058;
-            border-radius: 8px;
-            height: 16px;
-            width: 100%;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        .stat-fill {
-            background: linear-gradient(90deg, #3498db, #2ecc71);
-            height: 100%;
-            width: 20%;
-            transition: width 0.4s ease;
-        }
-        .btn {
-            background-color: #248046;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
+        h1 { margin: 0 0 5px 0; color: #2ecc71; font-size: 26px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .currency-display {
+            background: #111214;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
             font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
+            color: #f1c40f;
+            margin-bottom: 15px;
         }
-        .btn:hover { background-color: #1a6535; }
+        .stage-box { font-size: 14px; color: #949ba4; margin-bottom: 10px; font-weight: 500; }
+        
+        /* Rama copacului cu efect de strălucire la evoluție */
+        .tree-stage-wrapper {
+            height: 180px; display: flex; align-items: center; justify-content: center; margin: 15px 0;
+        }
+        .tree-img {
+            max-height: 160px; max-width: 160px;
+            filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease, filter 0.5s ease;
+        }
+        .tree-img:hover { transform: scale(1.08) rotate(2deg); }
+
+        .bar-container { text-align: left; font-size: 12px; color: #949ba4; margin-top: 10px; }
+        .bar { background: #4e5058; border-radius: 10px; height: 14px; width: 100%; overflow: hidden; margin-top: 4px; }
+        .bar-fill { height: 100%; transition: width 0.3s ease; }
+        #waterFill { background: linear-gradient(90deg, #3498db, #00bfff); width: 20%; }
+        #expFill { background: linear-gradient(90deg, #2ecc71, #a3e4d7); width: 0%; }
+
+        /* Zona de acțiuni și Shop */
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn {
+            background: #248046; color: white; border: none; padding: 10px;
+            font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s;
+        }
+        .btn:hover { background: #1a6535; }
+        .btn-shop { background: #e67e22; }
+        .btn-shop:hover { background: #d35400; }
+        
+        /* Audio Controller discret */
+        .audio-control { margin-top: 15px; font-size: 11px; color: #949ba4; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        <h1>🍂 LeafLife</h1>
-        <div class="stage-text" id="stageName">Stage: Loading Cosmic Seed...</div>
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="game-window">
+        <h1>🍂 LeafLife 2D</h1>
+        <div class="currency-display">🪙 <span id="coinCount">0</span> Aircraft Coins</div>
         
-        <img id="plantImg" src="https://i.imgur.com/83p1XbK.png" class="plant-canvas" alt="Plant Stature">
+        <div class="stage-box" id="stageTitle">Loading World...</div>
         
-        <div style="font-size: 14px; text-align: left; color: #b5bac1;">Hydration Level:</div>
-        <div class="stat-bar">
-            <div id="waterFill" class="stat-fill"></div>
+        <div class="tree-stage-wrapper">
+            <img id="treeAsset" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=300" class="tree-img" alt="Plant">
         </div>
 
-        <button class="btn" onclick="waterPlant()">💧 Care & Water Plant</button>
+        <div class="bar-container">
+            💧 Hydration Level:
+            <div class="bar"><div id="waterFill"></div></div>
+        </div>
+        
+        <div class="bar-container">
+            ✨ Evolution Progress:
+            <div class="bar"><div id="expFill"></div></div>
+        </div>
+
+        <div class="actions-grid">
+            <button class="btn" onclick="waterAction()">💧 Water Tree</button>
+            <button class="btn btn-shop" onclick="buyFertilizer()">🧪 Buy Fertilizer (15 🪙)</button>
+        </div>
+
+        <div class="audio-control" onclick="toggleMusic()">🎵 Toggle Background Music</div>
     </div>
 
     <script src="script.js"></script>
