@@ -6,10 +6,10 @@ let musicPlaying = false;
 let hasBeluga = false;
 
 const gameStages = {
-    1: { name: "🌱 Stage 1: Mystic Space Seed", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f331.png" },
-    2: { name: "🌿 Stage 2: Sprouting Leaf", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f33f.png" },
-    3: { name: "🌳 Stage 3: Aircraft Bonsai", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f333.png" },
-    4: { name: "✨ Stage 4: Ascended Ancient Entity", img: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f334.png" }
+    1: { name: "🌱 Stage 1: Mystic Space Seed", emoji: "🌱" },
+    2: { name: "🌿 Stage 2: Sprouting Leaf", emoji: "🌿" },
+    3: { name: "🌳 Stage 3: Aircraft Bonsai", emoji: "🌳" },
+    4: { name: "✨ Stage 4: Ascended Ancient Entity", emoji: "✨" }
 };
 
 function render() {
@@ -19,11 +19,11 @@ function render() {
     document.getElementById("stageTitle").innerText = gameStages[stage].name;
     
     if (hasBeluga) {
-        document.getElementById("treeAsset").src = "https://i.imgur.com/ifk1dWc.jpeg";
-        document.getElementById("treeAsset").className = "tree-img beluga-active";
+        document.getElementById("treeAsset").innerText = "🐱";
+        document.getElementById("treeAsset").className = "tree-emoji beluga-active";
         document.getElementById("stageTitle").innerText = "🐱 Beluga is vibing on your screen!";
     } else {
-        document.getElementById("treeAsset").src = gameStages[stage].img;
+        document.getElementById("treeAsset").innerText = gameStages[stage].emoji;
     }
 }
 
@@ -104,9 +104,13 @@ function toggleMusic() {
 }
 
 async function startSystem() {
-    if (typeof discordSdk !== 'undefined') {
-        const sdk = new window.discordSdk.DiscordSDK("1508701744283127808");
-        await sdk.ready();
+    if (typeof window.discordSdk !== 'undefined' || typeof discordSdk !== 'undefined') {
+        try {
+            const sdk = new window.discordSdk.DiscordSDK("1508701744283127808");
+            await sdk.ready();
+        } catch (err) {
+            print("Discord SDK failed, bypassing for fallback logic.");
+        }
     }
     render();
 }
